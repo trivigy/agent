@@ -1,0 +1,8 @@
+[requires]
+em-Protobuf/3.5.1@syncaide/stable
+em-nghttp2/1.30.0@syncaide/stable
+
+[options]
+
+[generators]
+cmake
