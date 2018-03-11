@@ -31,6 +31,7 @@ set(CMAKE_RANLIB "")
 include(${CONAN_USER_EMSDK_emscripten_root}/cmake/Modules/Platform/Emscripten.cmake)
 
 set(CMAKE_CXX_FLAGS "-s WASM=1 --bind")
+SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
 
 find_package(Protobuf REQUIRED)
 
@@ -51,8 +52,7 @@ link_directories(${CONAN_LIB_DIRS})
 #add_executable(index ${SOURCE_FILES})
 add_executable(index
     ${SOURCE_FILES}
-    ${PROTO_SRCS}
-    ${PROTO_HDRS})
+    ${PROTO_SRCS})
 
 set(IMPORT_LIBS
     protobuf
