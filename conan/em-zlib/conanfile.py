@@ -13,7 +13,7 @@ class ZlibConan(ConanFile):
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = "shared=False", "fPIC=False"
     exports_sources = ["CMakeLists.txt"]
-    requires = "emsdk/1.37.33@syncaide/stable"
+    requires = "emsdk/1.37.35@syncaide/stable"
     url = "https://github.com/madler/zlib"
     license = "http://www.zlib.net/zlib_license.html"
     description = "A Massively Spiffy Yet Delicately Unobtrusive Compression Library " \

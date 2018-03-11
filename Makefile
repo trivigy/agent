@@ -3,22 +3,21 @@ list:
 	@$(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$' | xargs | tr -s ' '  '\n'
 
 conan:
-	conan export conan/emscripten syncaide/stable
+	conan export conan/emsdk syncaide/stable
 	conan export conan/em-Protobuf syncaide/stable
 	conan export conan/em-nghttp2 syncaide/stable
 .PHONY: conan
 
 TARGET=all
 CMAKE_BUILD_TYPE=Debug
-EMSCRIPTEN_ROOT=/home/trivigy/Software/emsdk/emscripten/1.37.28
 VERBOSE=OFF
 build:
 	cmake -H. -Bbuild/${CMAKE_BUILD_TYPE}/ \
-		-DCMAKE_TOOLCHAIN_FILE=${EMSCRIPTEN_ROOT}/cmake/Modules/Platform/Emscripten.cmake \
+		-DCMAKE_TOOLCHAIN_FILE=$(shell pwd)/cmake/toolchain.cmake \
 		-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
 		-DCMAKE_VERBOSE_MAKEFILE:BOOL=${VERBOSE} \
 		-G "Unix Makefiles"
-	cmake --build build/${CMAKE_BUILD_TYPE}/ --target ${TARGET} -- -j4 VERBOSE=1
+	cmake --build build/${CMAKE_BUILD_TYPE}/ --target ${TARGET} -- -j4
 .PHONY: build
 
 rebuild: clean build
