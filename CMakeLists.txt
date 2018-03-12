@@ -49,8 +49,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CONAN_INCLUDE_DIRS})
 link_directories(${CONAN_LIB_DIRS})
 
-#add_executable(index ${SOURCE_FILES})
-add_executable(index
+add_executable(aide
     ${SOURCE_FILES}
     ${PROTO_SRCS})
 
@@ -58,4 +57,4 @@ set(IMPORT_LIBS
     protobuf
     nghttp2)
 
-target_link_libraries(index PUBLIC ${IMPORT_LIBS})
+target_link_libraries(aide PUBLIC ${IMPORT_LIBS})
