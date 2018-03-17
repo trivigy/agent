@@ -15,7 +15,7 @@ if (NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
 endif ()
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 
-project(aide VERSION 0.0.1)
+project(agent VERSION 0.0.1)
 conan_cmake_run(
     CONANFILE conanfile.txt
     BASIC_SETUP CMAKE_TARGETS
@@ -49,7 +49,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CONAN_INCLUDE_DIRS})
 link_directories(${CONAN_LIB_DIRS})
 
-add_executable(aide
+add_executable(syncaide
     ${SOURCE_FILES}
     ${PROTO_SRCS})
 
@@ -57,4 +57,4 @@ set(IMPORT_LIBS
     protobuf
     nghttp2)
 
-target_link_libraries(aide PUBLIC ${IMPORT_LIBS})
+target_link_libraries(syncaide PUBLIC ${IMPORT_LIBS})
