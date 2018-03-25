@@ -30,7 +30,7 @@ set(CMAKE_RANLIB "")
 
 include(${CONAN_USER_EMSDK_emscripten_root}/cmake/Modules/Platform/Emscripten.cmake)
 
-set(CMAKE_CXX_FLAGS "-s WASM=1 --bind")
+set(CMAKE_CXX_FLAGS "-s WASM=1 --bind --shell-file ${CMAKE_CURRENT_SOURCE_DIR}/src/shell.html")
 SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
 
 find_package(Protobuf REQUIRED)
