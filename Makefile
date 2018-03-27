@@ -4,8 +4,7 @@ list:
 
 conan:
 	conan export conan/emsdk syncaide/stable
-	conan export conan/em-Protobuf syncaide/stable
-	conan export conan/em-nghttp2 syncaide/stable
+	conan export conan/json syncaide/stable
 .PHONY: conan
 
 TARGET=all

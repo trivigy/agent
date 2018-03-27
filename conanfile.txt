@@ -1,6 +1,6 @@
 [requires]
-em-Protobuf/3.5.1@syncaide/stable
-em-nghttp2/1.30.0@syncaide/stable
+emsdk/1.37.35@syncaide/stable
+json/3.1.0@syncaide/stable
 
 [options]
 
