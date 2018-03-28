@@ -16,7 +16,11 @@ public:
         string identity;
     } network;
 
-    bool parse(const json &kwargs);
+    Options() = default;
+
+    Options(const Options &opts);
+
+    bool parse(int argc, const char **argv);
 };
 
 

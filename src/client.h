@@ -11,16 +11,14 @@ using namespace std;
 
 class Client {
 public:
-    explicit Client(Options &options);
+    explicit Client(const Options &options);
 
-    Options *cfg();
-
-    int start();
-
-private:
-    Options *_cfg;
+    Options &cfg();
 
     void main();
+
+private:
+    Options _cfg;
 };
 
 
