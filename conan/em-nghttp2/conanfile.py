@@ -9,7 +9,7 @@ class Nghttp2Conan(ConanFile):
     description = "HTTP/2 C Library and tools"
     license = "https://raw.githubusercontent.com/nghttp2/nghttp2/master/LICENSE"
     settings = "os", "arch", "compiler", "build_type"
-    requires = "emsdk/1.37.33@syncaide/stable"
+    requires = "emsdk/1.37.35@syncaide/stable"
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = "shared=False", "fPIC=False"
     generators = 'cmake'

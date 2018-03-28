@@ -10,7 +10,7 @@ class ProtobufConan(ConanFile):
     url = "https://github.com/google/protobuf"
     description = "Protocol Buffers - Google's data interchange format"
     license = "https://github.com/google/protobuf/blob/master/LICENSE"
-    requires = "Protobuf/3.5.1@syncaide/stable", "emsdk/1.37.33@syncaide/stable"
+    requires = "Protobuf/3.5.1@syncaide/stable", "emsdk/1.37.35@syncaide/stable"
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = "shared=False", "fPIC=False"

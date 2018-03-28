@@ -1,21 +1,16 @@
-#include <cerrno>
+#include "format.h"
+#include "client.h"
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <arpa/inet.h>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include <unistd.h>
 #include <fcntl.h>
-#include <sys/ioctl.h>
 #include <cassert>
 
-#ifdef __EMSCRIPTEN__
+using namespace std;
 
-#include <emscripten.h>
-
-#endif
+typedef struct sockaddr_in sockaddr_in;
 
 typedef struct {
     char *buffer;
@@ -23,7 +18,7 @@ typedef struct {
 } msg_t;
 
 int do_msg_read(int sockfd, msg_t *msg, int offset, int length,
-                struct sockaddr *addr, socklen_t *addrlen) {
+    struct sockaddr *addr, socklen_t *addrlen) {
     int res;
 
     if (!msg->length) {
@@ -47,7 +42,7 @@ int do_msg_read(int sockfd, msg_t *msg, int offset, int length,
         max = length;
     }
     res = recvfrom(sockfd, msg->buffer + offset, (size_t) max, 0, addr,
-                   addrlen);
+        addrlen);
     if (res == -1) {
         assert(errno == EAGAIN);
         return res;
@@ -59,7 +54,7 @@ int do_msg_read(int sockfd, msg_t *msg, int offset, int length,
 }
 
 int do_msg_write(int sockfd, msg_t *msg, int offset, int length,
-                 struct sockaddr *addr, socklen_t addrlen) {
+    struct sockaddr *addr, socklen_t addrlen) {
     int res;
 
     // send the message length first
@@ -74,7 +69,7 @@ int do_msg_write(int sockfd, msg_t *msg, int offset, int length,
             return res;
         }
         printf("do_msg_write: sending message header for %d bytes\n",
-               msg->length);
+            msg->length);
         assert(res == sizeof(int));
     }
 
@@ -85,7 +80,7 @@ int do_msg_write(int sockfd, msg_t *msg, int offset, int length,
     }
     if (addr) {
         res = sendto(sockfd, msg->buffer + offset, (size_t) max, 0, addr,
-                     addrlen);
+            addrlen);
     } else {
         res = send(sockfd, msg->buffer + offset, (size_t) max, 0);
     }
@@ -125,14 +120,7 @@ void finish(int result) {
         close(server.fd);
         server.fd = 0;
     }
-#ifdef __EMSCRIPTEN__
-#ifdef REPORT_RESULT
-    REPORT_RESULT(result);
-#endif
     emscripten_force_exit(result);
-#else
-    exit(result);
-#endif
 }
 
 void main_loop() {
@@ -159,7 +147,7 @@ void main_loop() {
         }
 
         res = do_msg_read(server.fd, &server.msg, echo_read, 0, nullptr,
-                          nullptr);
+            nullptr);
         if (res == -1) {
             return;
         } else if (res == 0) {
@@ -198,81 +186,15 @@ void main_loop() {
     }
 }
 
-// The callbacks for the async network events have a different signature than from
-// emscripten_set_main_loop (they get passed the fd of the socket triggering the event).
-// In this test application we want to try and keep as much in common as the timed loop
-// version but in a real application the fd can be used instead of needing to select().
-void async_main_loop(int fd, void *userData) {
-    printf("%s callback\n", (char *) userData);
-    main_loop();
-}
-
-void error_callback(int fd, int err, const char *msg, void *userData) {
-    int error;
-    socklen_t len = sizeof(error);
-
-    int ret = getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len);
-    printf("%s callback\n", (char *) userData);
-    printf("error message: %s\n", msg);
-
-    if (err == error) {
-        finish(EXIT_SUCCESS);
-    } else {
-        finish(EXIT_FAILURE);
-    }
-}
-
-int main() {
-    struct sockaddr_in addr;
-    int res;
-
-    memset(&server, 0, sizeof(server_t));
-    server.state = MSG_WRITE;
-
-    // setup the message we're going to echo
-    memset(&echo_msg, 0, sizeof(msg_t));
-    echo_msg.length = strlen(MESSAGE) + 1;
-    echo_msg.buffer = (char *) malloc((size_t) echo_msg.length);
-    strncpy(echo_msg.buffer, MESSAGE, (size_t) echo_msg.length);
-
-    echo_read = 0;
-    echo_wrote = 0;
-
-    server.fd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (server.fd == -1) {
-        perror("cannot create socket");
-        finish(EXIT_FAILURE);
-    }
-    fcntl(server.fd, F_SETFL, O_NONBLOCK);
-
-    // connect the socket
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(8847);
-    if (inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr) != 1) {
-        perror("inet_pton failed");
-        finish(EXIT_FAILURE);
+int main(int argc, const char **argv) {
+    Options options;
+    if (!options.parse(argc, argv)) {
+        emscripten_force_exit(EXIT_FAILURE);
     }
 
-    res = connect(server.fd, (struct sockaddr *) &addr, sizeof(addr));
-    if (res == -1 && errno != EINPROGRESS) {
-        perror("connect failed");
-        finish(EXIT_FAILURE);
-    }
-
-#ifdef __EMSCRIPTEN__
-#if TEST_ASYNC
-    // The first parameter being passed is actually an arbitrary userData pointer
-  // for simplicity this test just passes a basic char*
-  emscripten_set_socket_error_callback("error", error_callback);
-  emscripten_set_socket_open_callback("open", async_main_loop);
-  emscripten_set_socket_message_callback("message", async_main_loop);
-#else
-    emscripten_set_main_loop(main_loop, 60, 0);
-#endif
-#else
-    while (1) main_loop();
-#endif
-
-    return EXIT_SUCCESS;
+    emscripten_set_main_loop_arg([](void *self) {
+        void (Client::*func)();
+        func = &Client::main;
+        (((Client *)self)->*func)();
+    }, new Client(options), 1, 0);
 }

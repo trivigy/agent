@@ -6,7 +6,7 @@ import os
 
 class ProtobufConan(ConanFile):
     name = "emsdk"
-    version = "1.37.33"
+    version = "1.37.35"
     folder = "emsdk-portable"
     url = "https://github.com/kripken/emscripten"
     description = "Protocol Buffers - Google's data interchange format"
@@ -63,6 +63,6 @@ class ProtobufConan(ConanFile):
         self.env_info.path.append("{}/node/8.9.1_64bit/bin".format(folder))
         self.env_info.path.append(emscripten_folder)
         self.env_info.emsdk = "{}".format(folder)
-        self.env_info.em_config = "/home/trivigy/.emscripten"
+        self.env_info.em_config = str(Path.home() / ".emscripten")
         self.env_info.binaryen_root = "{}/clang/e{}_64bit/binarye".format(folder, self.version)
         self.env_info.emscripten = emscripten_folder
