@@ -11,9 +11,11 @@ Type parse(Type value) noexcept {
     return value;
 }
 
-const char *parse(const std::string &value) noexcept {
+template<typename Type>
+const Type *parse(const std::basic_string<Type> &value) noexcept {
     return value.c_str();
 }
+
 
 template<typename... Args>
 std::string format(const std::string &format, Args ... args) {
