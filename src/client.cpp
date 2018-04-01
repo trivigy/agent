@@ -1,18 +1,6 @@
 #include "client.h"
 
 Client::Client(const Options &options) : _cfg(options) {
-//    memset(&server, 0, sizeof(server_t));
-//    server.state = MSG_WRITE;
-//
-//    // setup the message we're going to echo
-//    memset(&echo_msg, 0, sizeof(msg_t));
-//    echo_msg.length = strlen(MESSAGE) + 1;
-//    echo_msg.buffer = (char *) malloc((size_t) echo_msg.length);
-//    strncpy(echo_msg.buffer, MESSAGE, (size_t) echo_msg.length);
-//
-//    echo_read = 0;
-//    echo_wrote = 0;
-//
     _sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (_sockfd == -1) {
         perror("cannot create socket");
@@ -39,6 +27,39 @@ Client::~Client() {
         close(_sockfd);
         _sockfd = 0;
     }
+}
+
+void Client::error(int fd, int err, const char *msg) {
+    if (_sockfd != fd) return;
+
+    cerr << "Client::error" << endl;
+}
+
+void Client::open(int fd) {
+    if (_sockfd != fd) return;
+
+    cerr << "Client::open" << endl;
+
+    int num = sendall("hello world!!!");
+    cerr << "sent bytes: " << to_string(num) << endl;
+}
+
+void Client::connection(int fd) {
+    if (_sockfd != fd) return;
+
+    cerr << "Client::connection" << endl;
+}
+
+void Client::message(int fd) {
+    if (_sockfd != fd) return;
+
+    cerr << "Client::message" << endl;
+}
+
+void Client::close(int fd) {
+    if (_sockfd != fd) return;
+
+    cerr << "Client::close" << endl;
 }
 
 void Client::main() {
@@ -168,19 +189,20 @@ void Client::main() {
 //    }
 }
 
-int Client::sendall(int s, char *buf, int *len) {
-    int total = 0;        // how many bytes we've sent
-    int bytesleft = *len; // how many we have left to send
-    int n;
+int Client::sendall(const string &msg) {
+    return sendall(vector<char>(msg.begin(), msg.end()));
+}
 
-    while (total < *len) {
-        n = send(s, buf + total, (size_t) bytesleft, 0);
-        if (n == -1) { break; }
-        total += n;
-        bytesleft -= n;
+int Client::sendall(vector<char> msg) {
+    int total = 0;
+    int bytesleft = msg.size();
+
+    while (total < msg.size()) {
+        int nbytes = send(_sockfd, &msg[total], (size_t) bytesleft, 0);
+        if (nbytes == -1) return nbytes;
+        total += nbytes;
+        bytesleft -= nbytes;
     }
 
-    *len = total; // return number actually sent here
-
-    return n == -1 ? -1 : 0; // return -1 on failure, 0 on success
+    return total;
 }

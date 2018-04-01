@@ -24,9 +24,21 @@ public:
 
     ~Client();
 
+    void error(int fd, int err, const char *msg);
+
+    void open(int fd);
+
+    void connection(int fd);
+
+    void message(int fd);
+
+    void close(int fd);
+
     void main();
 
-    int sendall(int s, char *buf, int *len);
+    int sendall(const string &msg);
+
+    int sendall(vector<char> msg);
 
 private:
     int _sockfd;
