@@ -1,5 +1,6 @@
 [requires]
-emsdk/1.37.36@syncaide/stable
+em-Protobuf/3.5.2@syncaide/stable
+emsdk/1.37.35@syncaide/stable
 json/3.1.2@syncaide/stable
 
 [options]

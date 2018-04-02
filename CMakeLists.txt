@@ -39,19 +39,23 @@ find_package(Protobuf REQUIRED)
 set(CMAKE_EXECUTABLE_SUFFIX ".html")
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 
-#set(PROTO_DEST ${CMAKE_CURRENT_BINARY_DIR}/protos)
-#file(MAKE_DIRECTORY ${PROTO_DEST})
+set(PROTO_DEST ${CMAKE_CURRENT_BINARY_DIR}/protos)
+file(MAKE_DIRECTORY ${PROTO_DEST})
 
-#file(GLOB PROTO_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/protos/*.proto)
-#protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_DEST} ${PROTO_FILES})
+file(GLOB PROTO_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/protos/*.proto)
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_DEST} ${PROTO_FILES})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CONAN_INCLUDE_DIRS})
 link_directories(${CONAN_LIB_DIRS})
 
-add_executable(syncaide ${SOURCE_FILES})
+add_executable(syncaide
+    ${SOURCE_FILES}
+    ${PROTO_HDRS}
+    ${PROTO_SRCS})
 
-set(IMPORT_LIBS)
+set(IMPORT_LIBS
+    protobuf-lite)
 
 target_link_libraries(syncaide PUBLIC ${IMPORT_LIBS})
