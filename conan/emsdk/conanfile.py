@@ -6,7 +6,7 @@ import os
 
 class EmsdkConan(ConanFile):
     name = "emsdk"
-    version = "1.37.36"
+    version = "1.37.35"
     folder = "emsdk-portable"
     url = "https://github.com/kripken/emscripten"
     description = "Protocol Buffers - Google's data interchange format"
