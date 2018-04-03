@@ -3,6 +3,8 @@ import "peer.proto";
 
 package protos.members;
 
+option optimize_for = LITE_RUNTIME;
+
 service Members {
     rpc gossip(GossipRequest) returns (GossipResponse) {}
     rpc list(ListRequest) returns (ListResponse) {}

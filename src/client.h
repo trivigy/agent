@@ -3,48 +3,39 @@
 
 #include "format.h"
 #include "options.h"
+#include "protos/peer.pb.h"
 
 #include <emscripten.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <unistd.h>
+#include <emscripten/bind.h>
+#include <emscripten/val.h>
+#include <functional>
 #include <iostream>
-#include <cstdlib>
-#include <fcntl.h>
-#include <cassert>
+#include <memory>
 
 using namespace std;
+using namespace std::placeholders;
+using emscripten::val;
+using emscripten::class_;
 
-class Client {
-    typedef struct sockaddr_in sockaddr_in;
+class Client : public enable_shared_from_this<Client> {
+    val WebSocket = val::global("WebSocket");
 
 public:
-    explicit Client(const Options &options);
+    explicit Client(const shared_ptr<Options> &opts);
 
-    ~Client();
+    void onerror(val event);
 
-    void error(int fd, int err, const char *msg);
+    void onopen(val event);
 
-    void open(int fd);
+    void onmessage(val event);
 
-    void connection(int fd);
+    void onclose(val event);
 
-    void message(int fd);
-
-    void close(int fd);
-
-    void main();
-
-    int sendall(const string &msg);
-
-    int sendall(vector<char> msg);
+    void run();
 
 private:
-    int _sockfd;
-    Options _cfg;
-    sockaddr_in _addr;
+    const shared_ptr<Options> &_cfg;
+    val _sock;
 };
-
 
 #endif //AGENT_CLIENT_H
