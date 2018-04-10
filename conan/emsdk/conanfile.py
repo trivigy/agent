@@ -9,7 +9,7 @@ class EmsdkConan(ConanFile):
     version = "1.37.35"
     folder = "emsdk-portable"
     url = "https://github.com/kripken/emscripten"
-    description = "Protocol Buffers - Google's data interchange format"
+    description = "Emscripten SDK"
     license = "https://github.com/kripken/emscripten/blob/incoming/LICENSE"
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
