@@ -3,7 +3,7 @@
 
 #include "format.h"
 #include "options.h"
-#include "protos/peer.pb.h"
+#include "protos/message.pb.h"
 
 #include <emscripten.h>
 #include <emscripten/bind.h>
@@ -20,9 +20,16 @@ using emscripten::class_;
 class Client : public enable_shared_from_this<Client> {
     val WebSocket = val::global("WebSocket");
 
-public:
-    explicit Client(const shared_ptr<Options> &opts);
+private:
+    Options _cfg;
+    val _sock;
 
+public:
+    explicit Client(Options &options);
+
+    void start();
+
+private:
     void onerror(val event);
 
     void onopen(val event);
@@ -30,12 +37,6 @@ public:
     void onmessage(val event);
 
     void onclose(val event);
-
-    void run();
-
-private:
-    const shared_ptr<Options> &_cfg;
-    val _sock;
 };
 
 #endif //AGENT_CLIENT_H

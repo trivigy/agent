@@ -10,10 +10,13 @@ using nlohmann::json;
 
 class Options {
 public:
-    struct {
-        string url;
-    } network;
+    string id;
+    string addr;
+    string digest;
+    long epoch;
+    string signature;
 
+public:
     bool parse(int argc, const char **argv);
 };
 

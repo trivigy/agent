@@ -1,11 +1,15 @@
 #include "options.h"
 
 bool Options::parse(int argc, const char **argv) {
-    if (argc != 2) return false;
-    auto cfg = json::parse(argv[1]);
+    if (argc != 3) return false;
+    signature = argv[1];
+    auto cfg = json::parse(argv[2]);
     try {
-        this->network.url = cfg.at("url").get<string>();
-    } catch (json::out_of_range &e) {
+        id = cfg.at("id").get<string>();
+        addr = cfg.at("addr").get<string>();
+        digest = cfg.at("digest").get<string>();
+        epoch = cfg.at("epoch").get<long>();
+    } catch (exception &e) {
         cerr << e.what() << endl;
         return false;
     }
