@@ -10,11 +10,15 @@ using nlohmann::json;
 
 class Options {
 public:
+    struct {
+        string signature;
+        string digest;
+    } verify;
+
     string id;
     string addr;
-    string digest;
+    string sha256;
     long epoch;
-    string signature;
 
 public:
     bool parse(int argc, const char **argv);

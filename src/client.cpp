@@ -1,4 +1,5 @@
 #include "client.h"
+#include "options.h"
 
 Client::Client(Options &options) :
     _cfg(options),
@@ -34,6 +35,9 @@ void Client::onopen(val event) {
     protos::Message msg;
     msg.set_id(_cfg.id);
     msg.set_type(protos::MessageType::LOGIN);
+    protos::Login *login = msg.mutable_login();
+    login->set_signature(_cfg.verify.signature);
+    login->set_digest(_cfg.verify.digest);
 
     string bytes = msg.SerializeAsString();
     size_t size = msg.ByteSizeLong();
