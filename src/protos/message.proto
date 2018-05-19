@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package protos;
+
+option optimize_for = LITE_RUNTIME;
+
+enum MessageType {
+    UNKNOWN = 0;
+    LOGIN = 1;
+    TEMPLATE = 2;
+    SUBMIT = 3;
+    REPLY = 4;
+}
+
+message Message {
+    string id = 1;
+    MessageType type = 2;
+    oneof body {
+        Login login = 3;
+        Template template = 4;
+        Submit submit = 5;
+        Reply reply = 6;
+    }
+}
+
+message Login {
+    string signature = 1;
+    string arguments = 2;
+}
+
+message Template {
+
+}
+
+message Submit {
+
+}
+
+message Reply {
+    MessageType type = 1;
+    int32 status = 2;
+    string message = 3;
+}
