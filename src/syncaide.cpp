@@ -8,9 +8,9 @@ EMSCRIPTEN_BINDINGS(Syncaide) {
 }
 
 int main(int argc, const char **argv) {
-    auto options = make_shared<Options>();
-    if (!options->parse(argc, argv)) {
+    Options options;
+    if (!options.parse(argc, argv)) {
         emscripten_force_exit(EXIT_FAILURE);
     }
-    make_shared<Client>(options)->run();
+    make_shared<Client>(options)->start();
 }

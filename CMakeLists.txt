@@ -9,9 +9,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 if (NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
     message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
     file(DOWNLOAD
-        "https://raw.githubusercontent.com/conan-io/cmake-conan/v0.8/conan.cmake"
-        "${CMAKE_BINARY_DIR}/conan.cmake"
-        EXPECTED_MD5 58bc519cadc890b5c33235defadc1176)
+        "https://raw.githubusercontent.com/conan-io/cmake-conan/v0.11/conan.cmake"
+        "${CMAKE_BINARY_DIR}/conan.cmake")
 endif ()
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 
