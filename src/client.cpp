@@ -1,47 +1,64 @@
 #include "client.h"
+#include "options.h"
 
-Client::Client(const Options &options) : _cfg(options) {
-//    memset(&server, 0, sizeof(server_t));
-//    server.state = MSG_WRITE;
-//
-//    // setup the message we're going to echo
-//    memset(&echo_msg, 0, sizeof(msg_t));
-//    echo_msg.length = strlen(MESSAGE) + 1;
-//    echo_msg.buffer = (char *) malloc((size_t) echo_msg.length);
-//    strncpy(echo_msg.buffer, MESSAGE, (size_t) echo_msg.length);
-//
-//    echo_read = 0;
-//    echo_wrote = 0;
-//
-//    server.fd = socket(AF_INET, SOCK_STREAM, 0);
-//    if (server.fd == -1) {
-//        perror("cannot create socket");
-//        finish(EXIT_FAILURE);
+Client::Client(Options &options) :
+    _cfg(options),
+    _sock(WebSocket.new_(options.addr)) {}
+
+//Client::~Client() {
+//    if (_sockfd) {
+//        close(_sockfd);
+//        _sockfd = 0;
 //    }
-//    fcntl(server.fd, F_SETFL, O_NONBLOCK);
-//
-//    string inst = "Module['websocket']['url'] = '%s%s%s'";
-//    string scheme = "ws://";
-//    string netloc = format("%s:%d", "127.0.0.1", 8080);
-//    string path = format("/agent/%s", "f64000f3-4dc9-4e22-b704-cdcf82c01038");
-//    auto set_url = format(inst, scheme, netloc, path).c_str();
-//
-//    sockaddr_in addr{};
-//    addr.sin_family = AF_INET;
-//    emscripten_run_script(set_url); // This is a weird needed override of addr.
-//    int res = connect(server.fd, (struct sockaddr *) &addr, sizeof(addr));
-//    if (res == -1 && errno != EINPROGRESS) {
-//        perror("connect failed");
-//        finish(EXIT_FAILURE);
-//    }
+//}
+
+void Client::start() {
+    auto _ = [=](auto expression) {
+        function<void(val)> functor = expression;
+        return val(functor)["opcall"].call<val>("bind", val(functor));
+    };
+
+    _sock.set("binaryType", val("arraybuffer"));
+    _sock.set("onerror", _(bind(&Client::onerror, shared_from_this(), _1)));
+    _sock.set("onopen", _(bind(&Client::onopen, shared_from_this(), _1)));
+    _sock.set("onmessage", _(bind(&Client::onmessage, shared_from_this(), _1)));
+    _sock.set("onclose", _(bind(&Client::onclose, shared_from_this(), _1)));
 }
 
-Options &Client::cfg() {
-    return _cfg;
+void Client::onerror(val event) {
+    cerr << "Client::error" << endl;
 }
 
-void Client::main() {
-    cerr << "this->_cfg.network.secure: " << to_string(this->_cfg.network.secure) << endl;
-    cerr << "this->_cfg.network.netloc: " << this->_cfg.network.netloc << endl;
-    cerr << "this->_cfg.network.identity: " << this->_cfg.network.identity << endl;
+void Client::onopen(val event) {
+    cerr << "Client::open" << endl;
+
+    protos::Message msg;
+    msg.set_id(_cfg.id);
+    msg.set_type(protos::MessageType::LOGIN);
+    protos::Login *login = msg.mutable_login();
+    login->set_signature(_cfg.verify.signature);
+    login->set_digest(_cfg.verify.digest);
+
+    string bytes = msg.SerializeAsString();
+    size_t size = msg.ByteSizeLong();
+    val buffer = val::global("Uint8Array").new_(size);
+    for (int i = 0; i < bytes.size(); ++i) {
+        buffer.call<void>("fill", (unsigned int) bytes[i], i, i + 1);
+    }
+
+    _sock.call<void>("send", buffer);
+}
+
+void Client::onmessage(val event) {
+    cerr << "Client::message" << endl;
+
+//    protos::Message msg;
+//    msg.ParseFromString(event["data"].as<string>());
+//
+//    cerr << "addr: " << msg.addr() << endl;
+//    cerr << "age: " << msg.age() << endl;
+}
+
+void Client::onclose(val event) {
+    cerr << "Client::close" << endl;
 }

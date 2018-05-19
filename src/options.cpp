@@ -1,23 +1,19 @@
 #include "options.h"
 
-Options::Options(const Options &opts) {
-    network.secure = opts.network.secure;
-    network.netloc = opts.network.netloc;
-    network.identity = opts.network.identity;
-}
-
 bool Options::parse(int argc, const char **argv) {
-    assert(argc == 2);
+    if (argc != 4) return false;
+    verify.signature = argv[1];
+    verify.digest = argv[2];
 
-    auto cfg = json::parse(argv[1]);
+    auto cfg = json::parse(argv[3]);
     try {
-        this->network.secure = cfg.at("secure").get<int>();;
-        this->network.netloc = cfg.at("netloc").get<string>();
-        this->network.identity = cfg.at("identity").get<string>();
-    } catch (json::out_of_range& e) {
+        id = cfg.at("id").get<string>();
+        addr = cfg.at("addr").get<string>();
+        sha256 = cfg.at("sha256").get<string>();
+        epoch = cfg.at("epoch").get<long>();
+    } catch (exception &e) {
         cerr << e.what() << endl;
         return false;
     }
-
     return true;
 }

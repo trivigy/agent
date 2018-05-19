@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-package protos;
-
-message Peer {
-    string addr = 1;
-    int32 age = 2;
-}

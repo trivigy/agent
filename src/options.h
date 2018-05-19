@@ -11,15 +11,16 @@ using nlohmann::json;
 class Options {
 public:
     struct {
-        bool secure;
-        string netloc;
-        string identity;
-    } network;
+        string signature;
+        string digest;
+    } verify;
 
-    Options() = default;
+    string id;
+    string addr;
+    string sha256;
+    long epoch;
 
-    Options(const Options &opts);
-
+public:
     bool parse(int argc, const char **argv);
 };
 
