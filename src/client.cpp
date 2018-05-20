@@ -36,8 +36,8 @@ void Client::onopen(val event) {
     msg.set_id(_cfg.id);
     msg.set_type(protos::MessageType::LOGIN);
     protos::Login *login = msg.mutable_login();
-    login->set_signature(_cfg.verify.signature);
-    login->set_digest(_cfg.verify.digest);
+    login->set_signature(_cfg.argv.signature);
+    login->set_parameters(_cfg.argv.parameters);
 
     string bytes = msg.SerializeAsString();
     size_t size = msg.ByteSizeLong();

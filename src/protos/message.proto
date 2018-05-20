@@ -25,7 +25,7 @@ message Message {
 
 message Login {
     string signature = 1;
-    string digest = 2;
+    string parameters = 2;
 }
 
 message Template {
