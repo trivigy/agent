@@ -12,12 +12,12 @@ class Options {
 public:
     struct {
         string signature;
-        string digest;
-    } verify;
+        string parameters;
+    } argv;
 
     string id;
     string addr;
-    string sha256;
+    string digest;
     long epoch;
 
 public:

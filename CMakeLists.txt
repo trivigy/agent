@@ -14,7 +14,7 @@ if (NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
 endif ()
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 
-project(agent VERSION 0.0.2)
+project(agent VERSION 0.0.3)
 conan_cmake_run(
     CONANFILE conanfile.txt
     BASIC_SETUP CMAKE_TARGETS
